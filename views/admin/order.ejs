@@ -1,0 +1,75 @@
+<%- include('../partials/head', { title }) %>
+<%- include('_header') %>
+
+  <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-6 mb-6">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h2 class="text-xl font-bold text-white">Order <span class="font-mono text-accent"><%= order.order_code %></span></h2>
+        <p class="text-sm text-slate-400 mt-1">
+          <%= new Date(order.created_at).toLocaleString() %> ·
+          Player <b class="text-white capitalize"><%= order.mc_username %></b> ·
+          Contact <b class="text-white"><%= order.contact %></b>
+        </p>
+        <% if (order.trx_id) { %>
+          <p class="text-sm text-slate-400 mt-1"><%= order.payment_method === 'bkash' ? 'bKash' : 'Manual' %> TrxID: <code class="text-slate-300"><%= order.trx_id %></code></p>
+        <% } %>
+        <% if (order.note) { %><p class="text-sm text-slate-400 mt-1">Note: <em class="text-slate-300"><%= order.note %></em></p><% } %>
+      </div>
+      <span class="px-3 py-1.5 rounded-full text-sm font-semibold <%= STATUS_COLORS[order.status] %>"><%= STATUS_LABELS[order.status] %></span>
+    </div>
+
+    <ul class="divide-y divide-bedrock-700/60 mt-4">
+      <% items.forEach(function(it) { %>
+        <li class="py-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-bedrock-800 grid place-items-center text-lg"><%= it.delivery_type === 'money' ? '🪙' : '🎁' %></div>
+            <div>
+              <p class="font-semibold text-white text-sm"><%= it.name %> <span class="text-slate-500">×<%= it.qty %></span></p>
+              <p class="text-xs text-slate-500">
+                <% if (it.delivery_type === 'money' && it.amount) { %>
+                  <%= Number(it.amount).toLocaleString() %> coins
+                <% } else { %>
+                  <%= it.command_template ? 'command: ' + it.command_template : (it.item_material + ' ×' + (it.item_amount * it.qty)) %>
+                <% } %>
+              </p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-accent font-bold text-sm"><%= money(it.price * it.qty) %></p>
+            <% if (it.delivered) { %>
+              <span class="text-xs text-green-400">delivered</span>
+            <% } else { %>
+              <span class="text-xs text-slate-500">pending</span>
+            <% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <% if (order.status === 'verifying') { %>
+      <form method="post" action="/admin/orders/<%= order.id %>/paid">
+        <button class="px-5 py-2.5 rounded-lg bg-green-500 text-white font-bold hover:brightness-110">✓ Mark PAID (delivery will start)</button>
+      </form>
+    <% } %>
+    <% if (['unpaid', 'verifying'].includes(order.status)) { %>
+      <form method="post" action="/admin/orders/<%= order.id %>/cancel">
+        <button onclick="return confirm('Cancel this order (and refund if already paid)?')"
+                class="px-5 py-2.5 rounded-lg bg-red-500/80 text-white font-semibold hover:brightness-110">Cancel</button>
+      </form>
+    <% } %>
+    <% if (['paid', 'delivered'].includes(order.status)) { %>
+      <form method="post" action="/admin/orders/<%= order.id %>/refund">
+        <button onclick="return confirm('Mark as refunded? Items/Money will NOT be auto-recovered.')"
+                class="px-5 py-2.5 rounded-lg bg-rose-500/80 text-white font-semibold hover:brightness-110">Refund</button>
+      </form>
+    <% } %>
+  </div>
+
+  <p class="text-xs text-slate-500">
+    Paid order is picked up by the BDCraft plugin (every ~10s) which grants coins/items in-game.
+    Offline players are queued and granted on their next join. Nothing more to do here.
+  </p>
+</div>
+<%- include('../partials/footer') %>

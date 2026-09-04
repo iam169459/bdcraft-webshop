@@ -1,0 +1,55 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-3xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-extrabold text-white mb-8">Your cart</h1>
+
+  <% if (cart.items.length === 0) { %>
+    <div class="text-center py-16 bg-bedrock-850 rounded-xl border border-bedrock-700/60">
+      <p class="text-5xl mb-4">🛒</p>
+      <p class="text-slate-300 mb-6">Your cart is empty.</p>
+      <a href="/shop" class="px-6 py-3 rounded-lg bg-accent text-bedrock-950 font-bold">Browse the shop</a>
+    </div>
+  <% } else { %>
+    <form method="post" action="/cart/update" class="space-y-3">
+      <% cart.items.forEach(function(line) { %>
+        <div class="flex items-center justify-between gap-4 bg-bedrock-850 border border-bedrock-700/60 rounded-xl px-4 py-3">
+          <div class="min-w-0">
+            <p class="font-bold text-white"><%= line.product.name %></p>
+            <p class="text-xs text-slate-500"><%= money(line.unit) %> each</p>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <input type="number" name="<%= line.product.id %>" value="<%= line.qty %>" min="1" max="99"
+                   class="w-20 bg-bedrock-800 border border-bedrock-700 rounded-lg px-2 py-1.5 text-sm text-center" />
+            <span class="text-accent font-bold w-24 text-right"><%= money(line.subtotal) %></span>
+            <button type="submit" form="remove-<%= line.product.id %>" class="text-slate-500 hover:text-red-400 text-xl leading-none" title="Remove">×</button>
+          </div>
+        </div>
+      <% }) %>
+
+      <div class="flex items-center justify-between bg-bedrock-800 border border-bedrock-700 rounded-xl px-4 py-4">
+        <div>
+          <p class="text-sm text-slate-400">Total (before payment)</p>
+          <p class="text-2xl font-extrabold text-accent"><%= money(cart.total) %></p>
+        </div>
+        <div class="flex gap-2">
+          <button class="px-5 py-3 rounded-lg border border-bedrock-600 text-slate-300 hover:bg-bedrock-800">Update</button>
+          <button type="submit" form="checkout" class="px-6 py-3 rounded-lg bg-accent text-bedrock-950 font-bold hover:brightness-110">Checkout →</button>
+        </div>
+      </div>
+    </form>
+
+    <% cart.items.forEach(function(line) { %>
+      <form method="post" action="/cart/remove" id="remove-<%= line.product.id %>" class="hidden">
+        <input type="hidden" name="productId" value="<%= line.product.id %>" />
+      </form>
+    <% }) %>
+
+    <form method="post" action="/checkout" id="checkout" class="hidden"></form>
+    <form method="post" action="/cart/clear" class="text-right mt-4">
+      <button class="text-xs text-slate-500 hover:text-red-400">Clear cart</button>
+    </form>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

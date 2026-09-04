@@ -1,0 +1,74 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/header') %>
+
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-extrabold text-white mb-2">Checkout</h1>
+  <p class="text-slate-400 mb-8">Send the money, then fill the form. Your order is delivered <span class="text-accent">automatically by our plugin</span> once we verify the payment.</p>
+
+  <div class="mb-6 flex gap-2">
+    <a href="/checkout?method=bkash" class="px-5 py-2.5 rounded-lg text-sm font-semibold <%- method === 'bkash' ? 'bg-pink-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">bKash</a>
+    <a href="/checkout?method=manual" class="px-5 py-2.5 rounded-lg text-sm font-semibold <%- method === 'manual' ? 'bg-indigo-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">Manual / Other</a>
+  </div>
+
+  <% if (method === 'bkash') { %>
+    <div class="bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-xl p-5 mb-6">
+      <h2 class="font-bold text-white mb-3">How to pay with bKash</h2>
+      <ol class="list-decimal list-inside space-y-1 text-sm text-slate-300">
+        <li>Go to bKash app → <b>Send Money</b> to the number below.</li>
+        <li>Send exactly <b class="text-white"><%= money(cart.total) %></b>.</li>
+        <li>Copy the <b class="text-pink-400">TrxID</b> you get from the SMS <em>(e.g. 9GK4XQQ7L9)</em>.</li>
+        <li>Paste it below with your Minecraft username — done!</li>
+      </ol>
+      <p class="mt-4 text-lg"><b class="text-pink-400">Send to:</b> <span class="font-mono text-white bg-bedrock-900 px-3 py-1 rounded-lg"><%= bkashNumber %></span> (<%= bkashName %>)</p>
+    </div>
+  <% } else { %>
+    <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-5 mb-6">
+      <h2 class="font-bold text-white mb-2">Manual / Other payment</h2>
+      <p class="text-sm text-slate-300">Nagad, Rocket, bank transfer or any method you agree with the admin. Send
+        <b class="text-white"><%= money(cart.total) %></b> and enter your transaction/reference ID below so we can verify.</p>
+    </div>
+  <% } %>
+
+  <form method="post" action="/checkout" class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-6 space-y-4">
+    <input type="hidden" name="payment_method" value="<%= method %>" />
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-300 mb-1">Your Minecraft username *</label>
+      <input name="mc_username" value="<%= form.mc_username %>" required minlength="3" maxlength="16"
+             placeholder="e.g. Steve2000"
+             class="w-full bg-bedrock-900 border <%- errors.mc_username ? 'border-red-500' : 'border-bedrock-700' %> rounded-lg px-4 py-3" />
+      <% if (errors.mc_username) { %><p class="text-red-400 text-xs mt-1"><%= errors.mc_username %></p><% } %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-300 mb-1">Your bKash / mobile number *</label>
+      <input name="contact" value="<%= form.contact %>" required placeholder="01XXXXXXXXX"
+             class="w-full bg-bedrock-900 border <%- errors.contact ? 'border-red-500' : 'border-bedrock-700' %> rounded-lg px-4 py-3" />
+      <% if (errors.contact) { %><p class="text-red-400 text-xs mt-1"><%= errors.contact %></p><% } %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-300 mb-1">Transaction ID / reference <span class="text-slate-500">(TrxID)</span> *</label>
+      <input name="trx_id" value="<%= form.trx_id %>" required maxlength="60"
+             placeholder="<%- method === 'bkash' ? 'e.g. 9GK4XQQ7L9' : 'e.g. TRX-12345' %>"
+             class="w-full bg-bedrock-900 border <%- errors.trx_id ? 'border-red-500' : 'border-bedrock-700' %> rounded-lg px-4 py-3" />
+      <% if (errors.trx_id) { %><p class="text-red-400 text-xs mt-1"><%= errors.trx_id %></p><% } %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-slate-300 mb-1">Order note <span class="text-slate-500">(optional)</span></label>
+      <input name="note" value="<%= form.note %>" maxlength="300" placeholder="Anything we should know?"
+             class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-3" />
+    </div>
+
+    <div class="flex items-center justify-between pt-2">
+      <div>
+        <p class="text-sm text-slate-400">Total to send</p>
+        <p class="text-2xl font-extrabold text-accent"><%= money(cart.total) %></p>
+      </div>
+      <button class="px-6 py-3 rounded-lg bg-accent text-bedrock-950 font-bold hover:brightness-110">Place order →</button>
+    </div>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

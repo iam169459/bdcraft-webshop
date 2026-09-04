@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title ? title + ' - ' : '' %><%= shopName %> Webshop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: {
+      extend: {
+        colors: {
+          bedrock: { 950:'#070b09', 900:'#0b120e', 850:'#101a14', 800:'#152118', 700:'#1d2f23', accent:'#3fd66f', gold:'#f5c542' }
+        }
+      }
+    } };
+  </script>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏</text></svg>">
+</head>
+<body class="bg-bedrock-950 text-slate-200 font-sans antialiased">

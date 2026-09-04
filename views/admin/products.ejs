@@ -1,0 +1,41 @@
+<%- include('../partials/head', { title }) %>
+<%- include('_header') %>
+
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="font-bold text-white text-lg">Products</h2>
+    <a href="/admin/products/new" class="px-4 py-2 rounded-lg bg-accent text-bedrock-950 font-bold text-sm">+ New product</a>
+  </div>
+
+  <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-bedrock-800">
+        <tr class="text-left text-slate-400 text-xs">
+          <th class="px-4 py-3">Name</th><th class="px-4 py-3">Category</th><th class="px-4 py-3">Type</th>
+          <th class="px-4 py-3">Price</th><th class="px-4 py-3">Active</th><th class="px-4 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-bedrock-700/60">
+        <% if (products.length === 0) { %>
+          <tr><td colspan="6" class="px-4 py-10 text-center text-slate-500">No products yet.</td></tr>
+        <% } %>
+        <% products.forEach(function(p) { %>
+          <tr class="hover:bg-bedrock-800/50">
+            <td class="px-4 py-3 font-semibold text-white"><%= p.name %></td>
+            <td class="px-4 py-3 text-slate-300"><%= p.category %></td>
+            <td class="px-4 py-3 text-slate-300"><%= p.delivery_type === 'money' ? `🪙 ${p.in_game_amount?.toLocaleString()} coins` : (p.command_template || `${p.item_material} ×${p.item_amount}`) %></td>
+            <td class="px-4 py-3 font-bold text-accent"><%= money(p.price_bdt) %></td>
+            <td class="px-4 py-3"><span class="text-xs px-2 py-1 rounded-full <%- p.active ? 'bg-green-500/15 text-green-300' : 'bg-slate-500/15 text-slate-400' %>"><%= p.active ? 'Live' : 'Hidden' %></span></td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <a href="/admin/products/<%= p.id %>/edit" class="text-sm text-accent hover:underline">Edit</a>
+              <form method="post" action="/admin/products/<%= p.id %>/delete" class="inline" onsubmit="return confirm('Hide <%= p.name.replace(/'/g, '') %>?');">
+                <button class="text-sm text-red-400 hover:underline ml-3"><%= p.active ? 'Hide' : 'Re-enable' %></button>
+                <% if (!p.active) { %><input type="hidden" name="active" value="1" /><% } %>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/footer') %>

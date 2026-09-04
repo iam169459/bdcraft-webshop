@@ -1,0 +1,21 @@
+* { box-sizing: border-box; }
+
+html { scrollbar-color: #1d2f23 #0b120e; }
+body { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+
+input, select, textarea, button { font: inherit; color: inherit; }
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(63, 214, 111, 0.55);
+  outline-offset: 1px;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b120e; }
+::-webkit-scrollbar-thumb { background: #1d2f23; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #2a4434; }
+
+code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* Pixel accents for that blocky feel */
+.pixel-card { border-radius: 6px; box-shadow: inset 0 0 0 2px rgba(63, 214, 111, 0.08); }

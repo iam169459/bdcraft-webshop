@@ -1,0 +1,42 @@
+<%- include('../partials/head', { title }) %>
+<%- include('_header') %>
+
+  <div class="flex items-center gap-2 mb-6">
+    <% [null, 'unpaid', 'verifying', 'paid', 'delivered', 'cancelled', 'refunded'].forEach(function(s) { %>
+      <a href="/admin/orders<%= s ? '?status=' + s : '' %>"
+         class="px-3 py-1.5 rounded-lg text-sm border <%- filter === s ? 'bg-accent text-bedrock-950 border-accent font-bold' : 'border-bedrock-700 text-slate-300 hover:bg-bedrock-800' %>">
+        <%= s ? STATUS_LABELS[s] : 'All' %>
+      </a>
+    <% }) %>
+  </div>
+
+  <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-bedrock-800">
+        <tr class="text-left text-slate-400 text-xs">
+          <th class="px-4 py-3">Code</th><th class="px-4 py-3">Player</th><th class="px-4 py-3">Contact</th>
+          <th class="px-4 py-3">TrxID</th><th class="px-4 py-3">Method</th><th class="px-4 py-3">Total</th>
+          <th class="px-4 py-3">Status</th><th class="px-4 py-3">Created</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-bedrock-700/60">
+        <% if (orders.length === 0) { %>
+          <tr><td colspan="8" class="px-4 py-10 text-center text-slate-500">No orders here.</td></tr>
+        <% } %>
+        <% orders.forEach(function(o) { %>
+          <tr class="hover:bg-bedrock-800/50">
+            <td class="px-4 py-3"><a class="font-mono text-accent hover:underline" href="/admin/orders/<%= o.id %>"><%= o.order_code %></a></td>
+            <td class="px-4 py-3 capitalize"><%= o.mc_username %></td>
+            <td class="px-4 py-3 font-mono text-xs"><%= o.contact %></td>
+            <td class="px-4 py-3 font-mono text-xs text-slate-300"><%= o.trx_id || '—' %></td>
+            <td class="px-4 py-3"><%= o.payment_method === 'bkash' ? '🧡 bKash' : 'Manual' %></td>
+            <td class="px-4 py-3 font-semibold text-white"><%= money(o.total) %></td>
+            <td class="px-4 py-3"><span class="text-xs px-2 py-1 rounded-full <%= STATUS_COLORS[o.status] %>"><%= STATUS_LABELS[o.status] %></span></td>
+            <td class="px-4 py-3 text-slate-400 whitespace-nowrap"><%= new Date(o.created_at).toLocaleString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/footer') %>

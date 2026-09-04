@@ -1,0 +1,41 @@
+# Render Blueprint for the BDCraft webshop.
+#
+# NOTE: the DB is Neon Postgres (serverless) because your Minecraft plugin
+# connects to the exact same database to deliver purchases. Create the DB at
+# https://neon.tech and paste its connection string into the DATABASE_URL env
+# var when creating the service (or set it below).
+#
+# To use: go to Render -> New -> Blueprint, point it at this repo.
+services:
+  - type: web
+    name: bdcraft-shop
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      # Fill these in on Render (dashboard or when deploying) - NEVER commit real secrets.
+      - key: DATABASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: SHOP_NAME
+        value: BDCraft
+      - key: MC_IP
+        value: play.bdcraft.example
+      - key: MC_VERSION
+        value: "1.20.4"
+      - key: BKASH_NUMBER
+        value: "01XXXXXXXXX"
+      - key: BKASH_NAME
+        value: BDCraft Shop
+      - key: CURRENCY
+        value: BDT
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DISCORD_URL
+        sync: false

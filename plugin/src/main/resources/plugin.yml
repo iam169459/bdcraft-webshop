@@ -1,0 +1,8 @@
+name: BDCraftShop
+version: ${project.version}
+main: com.bdcraft.shop.BDCraftShop
+api-version: '1.20'
+author: BDCraft
+description: Delivers BDCraft webshop purchases (coins, items, ranks) in-game by polling the shared Neon database.
+softdepend:
+  - Vault

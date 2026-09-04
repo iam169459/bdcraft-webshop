@@ -1,0 +1,98 @@
+<%- include('../partials/head', { title }) %>
+<%- include('_header') %>
+
+  <div class="max-w-2xl">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-bold text-white text-lg"><%= product ? 'Edit product' : 'New product' %></h2>
+      <a href="/admin/products" class="text-sm text-slate-400 hover:text-white">← back</a>
+    </div>
+
+    <form method="post" action="<%= product ? '/admin/products/' + product.id : '/admin/products' %>" class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-6 space-y-4">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Name *</label>
+          <input name="name" value="<%= form.name || '' %>" required class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+          <% if (errors.name) { %><p class="text-red-400 text-xs mt-1"><%= errors.name %></p><% } %>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Slug (URL) *</label>
+          <input name="slug" value="<%= form.slug || '' %>" required class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+          <% if (errors.slug) { %><p class="text-red-400 text-xs mt-1"><%= errors.slug %></p><% } %>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Category</label>
+          <input name="category" value="<%= form.category || 'general' %>" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" placeholder="In-Game Money / Ranks / Kits" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Price (BDT) *</label>
+          <input name="price_bdt" type="number" step="any" min="1" value="<%= form.price_bdt || '' %>" required class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+          <% if (errors.price_bdt) { %><p class="text-red-400 text-xs mt-1"><%= errors.price_bdt %></p><% } %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-300 mb-1">Description</label>
+        <textarea name="description" rows="2" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5"><%= form.description || '' %></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-300 mb-1">Delivery type</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 text-sm"><input type="radio" name="delivery_type" value="money" <%- form.delivery_type !== 'item' ? 'checked' : '' %> /> In-game money (coins)</label>
+          <label class="flex items-center gap-2 text-sm"><input type="radio" name="delivery_type" value="item" <%- form.delivery_type === 'item' ? 'checked' : '' %> /> Item / rank / kit</label>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Coin amount (for money products)</label>
+          <input name="in_game_amount" type="number" step="any" min="0" value="<%= form.in_game_amount || '' %>" placeholder="500000" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+          <% if (errors.in_game_amount) { %><p class="text-red-400 text-xs mt-1"><%= errors.in_game_amount %></p><% } %>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Item material (for item products)</label>
+          <input name="item_material" value="<%= form.item_material || '' %>" placeholder="DIAMOND" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Items per unit</label>
+          <input name="item_amount" type="number" min="1" value="<%= form.item_amount || '' %>" placeholder="1" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Command template (overrides material)</label>
+          <input name="command_template" value="<%= form.command_template || '' %>" placeholder="lp user {player} parent add vip" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+        </div>
+      </div>
+      <% if (errors.item) { %><p class="text-red-400 text-xs"><%= errors.item %></p><% } %>
+      <% if (errors.command) { %><p class="text-red-400 text-xs"><%= errors.command %></p><% } %>
+      <p class="text-xs text-slate-500">For item products give either material+amount <em>or</em> a console command containing <code>{player}</code>.</p>
+
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Image URL (optional)</label>
+          <input name="image_url" value="<%= form.image_url || '' %>" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-300 mb-1">Sort order</label>
+          <input name="sort_order" type="number" value="<%= form.sort_order || 0 %>" class="w-full bg-bedrock-900 border border-bedrock-700 rounded-lg px-4 py-2.5" />
+        </div>
+        <div class="flex items-end gap-4 pb-1.5">
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="featured" value="1" <%- form.featured ? 'checked' : '' %> /> Featured</label>
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="active" value="1" <%- form.active !== false ? 'checked' : '' %> /> Live
+          </label>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button class="px-6 py-2.5 rounded-lg bg-accent text-bedrock-950 font-bold"><%= product ? 'Save changes' : 'Create product' %></button>
+      </div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/footer') %>

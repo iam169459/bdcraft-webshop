@@ -1,0 +1,56 @@
+<%- include('../partials/head', { title }) %>
+<%- include('_header') %>
+
+  <% if (counts.verifying > 0) { %>
+    <div class="border border-amber-500/40 bg-amber-500/10 rounded-xl px-5 py-4 mb-8 flex items-center justify-between">
+      <p class="text-amber-200 text-sm"><b><%= counts.verifying %></b> order(s) waiting for payment verification.</p>
+      <a href="/admin/orders?status=verifying" class="text-sm font-semibold text-amber-300 hover:underline">Review →</a>
+    </div>
+  <% } %>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">Orders paid+delivered</p>
+      <p class="text-3xl font-extrabold text-white mt-1"><%= paidOrders %></p>
+    </div>
+    <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">Revenue obtained</p>
+      <p class="text-3xl font-extrabold text-accent mt-1"><%= money(revenue) %></p>
+    </div>
+    <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">Awaiting verification</p>
+      <p class="text-3xl font-extrabold text-amber-300 mt-1"><%= counts.verifying %></p>
+    </div>
+    <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">Awaiting in-game delivery</p>
+      <p class="text-3xl font-extrabold text-blue-300 mt-1"><%= counts.paid %></p>
+    </div>
+  </div>
+
+  <div class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-bold text-white">Recent orders</h2>
+      <a href="/admin/orders" class="text-sm text-accent hover:underline">View all</a>
+    </div>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-slate-500 text-xs">
+          <th class="pb-2">Code</th><th class="pb-2">Player</th><th class="pb-2">Method</th><th class="pb-2">Total</th><th class="pb-2">Status</th><th class="pb-2 text-right">When</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-bedrock-700/60">
+        <% recent.forEach(function(o) { %>
+          <tr class="hover:bg-bedrock-800/50">
+            <td class="py-2.5"><a class="font-mono text-accent hover:underline" href="/admin/orders/<%= o.id %>"><%= o.order_code %></a></td>
+            <td class="py-2.5 capitalize"><%= o.mc_username %></td>
+            <td class="py-2.5"><%= o.payment_method === 'bkash' ? 'bKash' : 'Manual' %></td>
+            <td class="py-2.5 font-semibold text-white"><%= money(o.total) %></td>
+            <td class="py-2.5"><span class="text-xs px-2 py-1 rounded-full <%= STATUS_COLORS[o.status] %>"><%= STATUS_LABELS[o.status] %></span></td>
+            <td class="py-2.5 text-right text-slate-400 whitespace-nowrap"><%= new Date(o.created_at).toLocaleDateString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,31 @@
+# ------------------------------------------------------------------
+# BDCraftShop configuration
+# This must point to the SAME Neon Postgres database that the webshop
+# uses (see .env DATABASE_URL on the web side).
+# ------------------------------------------------------------------
+database:
+  # JDBC style. Take the Neon connection string, convert the scheme:
+  #   postgres://USER:PASS@HOST:5432/dbname?sslmode=require
+  # into:
+  #   jdbc:postgresql://HOST:5432/dbname?sslmode=require
+  url: "jdbc:postgresql://<host>:5432/bdcraft?sslmode=require"
+  user: "<user>"
+  password: "<password>"
+
+  # How often (seconds) the server checks for new paid purchases.
+  poll-interval: 10
+
+# Money delivery.
+# Options: vault | command
+#   vault   = deposit through Vault (needs an economy plugin like EssentialsX /
+#             CMI / CoinsEngine that supports Vault). Recommended.
+#   command = fall back to a console command, e.g. "eco give {player} {amount}".
+economy:
+  mode: vault
+  command: "eco give {player} {amount}"
+
+# i18n of plugin messages sent to players.
+messages:
+  money-granted: "&a&lBDCraft Shop &8» &fThanks for your purchase! &a{amount} coins &fadded to your balance."
+  item-granted: "&a&lBDCraft Shop &8» &fThanks for your purchase! You received &a{items}x {material}&f."
+  command-done: "&a&lBDCraft Shop &8» &fPurchase delivered. Check your inventory!"

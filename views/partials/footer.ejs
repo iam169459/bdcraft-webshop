@@ -1,0 +1,29 @@
+<footer class="border-t border-bedrock-700/60 mt-16">
+  <div class="max-w-6xl mx-auto px-4 py-10 grid gap-8 sm:grid-cols-3 text-sm text-slate-400">
+    <div>
+      <p class="font-bold text-white mb-2"><%= shopName %></p>
+      <p>Bangladesh's friendliest Minecraft survival + skyblock server. Fair prices, instant delivery after payment is verified.</p>
+    </div>
+    <div>
+      <p class="font-bold text-white mb-2">Server</p>
+      <ul class="space-y-1">
+        <li>IP: <code class="text-accent bg-bedrock-800 px-2 py-0.5 rounded"><%= mcIp %></code></li>
+        <li>Version: <%= mcVersion %></li>
+        <% if (discordUrl) { %><li><a href="<%= discordUrl %>" class="hover:text-accent">Join our Discord →</a></li><% } %>
+      </ul>
+    </div>
+    <div>
+      <p class="font-bold text-white mb-2">Payments</p>
+      <ul class="space-y-1">
+        <li>bkash / Nagad / Rocket accepted</li>
+        <li>Manual verification in minutes</li>
+        <li><a href="/order/TRACK" class="hover:text-accent">Track your order</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-bedrock-700/60 py-4 text-center text-xs text-slate-500">
+    © <%= new Date().getFullYear() %> <%= shopName %> · Not affiliated with Mojang.
+  </div>
+</footer>
+</body>
+</html>
