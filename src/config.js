@@ -13,6 +13,7 @@ const config = {
   port: intEnv('PORT', 3000),
   databaseUrl: process.env.DATABASE_URL,
   sessionSecret: process.env.SESSION_SECRET || 'dev-insecure-secret-change-me',
+  secureCookies: process.env.NODE_ENV === 'production',
   shopName: process.env.SHOP_NAME || 'BDCraft',
   mcIp: process.env.MC_IP || 'play.bdcraft.example',
   mcVersion: process.env.MC_VERSION || '1.20.4',

@@ -1,5 +1,7 @@
 'use strict';
 
+const config = require('./config');
+
 // Cart persisted in a signed cookie so it survives server restarts (Render
 // free tier) and requires no DB calls on every page. Keys are product IDs.
 
@@ -28,6 +30,7 @@ function setCart(res, cart) {
   res.cookie(CART_COOKIE, serialize(cart), {
     httpOnly: true,
     sameSite: 'lax',
+    secure: config.secureCookies,
     maxAge: 1000 * 60 * 60 * 24 * 14, // 14 days
     signed: true,
   });

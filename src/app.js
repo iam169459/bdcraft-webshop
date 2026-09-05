@@ -2,6 +2,7 @@
 
 const path = require('path');
 const express = require('express');
+const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
@@ -21,7 +22,10 @@ function createApp(pool) {
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, '..', 'views'));
+  app.set('trust proxy', 1); // Render / proxies: correct req.secure & client IPs
+  app.disable('x-powered-by');
 
+  app.use(compression()); // gzip HTML/JS/CSS/JSON responses
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cookieParser(config.sessionSecret));
@@ -29,8 +33,25 @@ function createApp(pool) {
     secret: config.sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 24 },
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: config.secureCookies,
+      maxAge: 1000 * 60 * 60 * 24,
+    },
   }));
+
+  // Basic security headers.
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'same-origin');
+    next();
+  });
+
+  // Static assets: long-lived cache, immutable (hashed-free but CSS/JS rarely change).
+  app.use('/css', express.static(path.join(__dirname, '..', 'public', 'css'), { maxAge: '7d' }));
+  app.use('/js', express.static(path.join(__dirname, '..', 'public', 'js'), { maxAge: '7d' }));
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
   // Populate template locals for every request.

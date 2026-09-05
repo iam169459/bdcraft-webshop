@@ -58,4 +58,5 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_orders_status   ON orders(status);
-CREATE INDEX IF NOT EXISTS idx_oi_pending      ON order_items(delivered, delivered_at);
+CREATE INDEX IF NOT EXISTS idx_oi_pending      ON order_items(delivered);
+CREATE INDEX IF NOT EXISTS idx_oi_order        ON order_items(order_id);
