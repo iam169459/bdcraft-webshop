@@ -59,21 +59,15 @@ const CATALOG = [
     description: '18,000 in-game coins - the ultimate deposit.',
     price_bdt: 1800, money: true },
 
-  // ---- Kits & keys (item deposits) ----
+  // ---- Kits (item deposits) ----
   { name: 'Starter Kit', slug: 'starter-kit', category: 'Kits & Keys',
     description: 'Food, tools and armor to get you started fast.',
     price_bdt: 20, item: true,
     command_template: 'kitgive {player} starter' },
-  { name: 'Crate Key', slug: 'crate-key', category: 'Kits & Keys',
-    description: '1 legendary crate key. Spin and win!',
-    price_bdt: 30, item: true, item_material: 'TRIPWIRE_HOOK', item_amount: 1 },
   { name: 'Miner Kit', slug: 'miner-kit', category: 'Kits & Keys',
     description: 'A full miner kit with enchanted tools.',
     price_bdt: 150, item: true,
     command_template: 'kitgive {player} miner' },
-  { name: 'Crate Key x5', slug: 'crate-key-5', category: 'Kits & Keys',
-    description: '5 legendary crate keys - bulk discount!',
-    price_bdt: 120, item: true, item_material: 'TRIPWIRE_HOOK', item_amount: 5 },
   { name: 'PvP Kit', slug: 'pvp-kit', category: 'Kits & Keys',
     description: 'Sharpened sword, bow and combat gear for the arena.',
     price_bdt: 200, item: true,
@@ -96,11 +90,13 @@ const CATALOG = [
 
 const COIN_RATE = config.coinRate;
 
-// Products seeded at the old coin rate (100K-scale packs) are retired when the
-// rate changes so the shop never shows conflicting pricing.
-const LEGACY_SLUGS = [
+// Products that should never appear in the shop. Includes packs seeded at
+// the old coin rate and any removed products (e.g. crate keys). Kept here so
+// they stay hidden across deploys even if they already exist in the DB.
+const RETIRED_SLUGS = [
   '100k-coins', '250k-coins', '500k-coins', '750k-coins', '1m-coins',
   '1p5m-coins', '2m-coins', '3m-coins', '5m-coins', '10m-coins', '25m-coins',
+  'crate-key', 'crate-key-5',
 ];
 
 async function seedProducts() {
@@ -120,9 +116,10 @@ async function seedProducts() {
     );
   }
 
-  // Retire products that were seeded under the previous coin rate.
-  if (LEGACY_SLUGS.length > 0) {
-    await pool.query('UPDATE products SET active = FALSE WHERE slug = ANY($1::text[])', [LEGACY_SLUGS]);
+  // Retire products that are no longer part of the catalog (old coin-rate
+  // packs, crate keys, etc.) so they never show up in the shop.
+  if (RETIRED_SLUGS.length > 0) {
+    await pool.query('UPDATE products SET active = FALSE WHERE slug = ANY($1::text[])', [RETIRED_SLUGS]);
   }
 
   console.log(`[db] catalog sync complete (${CATALOG.length} products, 1 tk = ${COIN_RATE} coins)`);
