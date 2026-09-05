@@ -5,13 +5,23 @@ const path = require('path');
 const { Pool } = require('pg');
 const config = require('./config');
 
-// Neon Postgres requires SSL.
+// Neon Postgres requires SSL (rejectUnauthorized for self-signed certs).
+// Local dev DBs usually don't: append ?sslmode=disable to disable TLS.
+const requiresSsl = !config.databaseUrl.includes('sslmode=disable');
 const pool = new Pool({
   connectionString: config.databaseUrl,
-  ssl: { rejectUnauthorized: false },
-  max: 5,
-  connectionTimeoutMillis: 10000,
+  ssl: requiresSsl ? { rejectUnauthorized: false } : false,
+  max: 10, // increased from 5 for better concurrent query handling
+  connectionTimeoutMillis: 8000,
 });
+
+// Track pool status for health checks.
+pool.on('connect', () => console.log('[db] new client connected'));
+pool.on('error', (err) => console.error('[db] pool error', err));
+
+// ---------------------------------------------------------------------------
+// Schema initialization (run once on first boot)
+// ---------------------------------------------------------------------------
 
 async function initSchema() {
   const sql = fs.readFileSync(path.join(__dirname, '..', 'sql', 'schema.sql'), 'utf8');
@@ -19,10 +29,20 @@ async function initSchema() {
   console.log('[db] schema ready');
 }
 
-// Sample catalog. Prices in BDT. Coin deposits are priced at a fixed rate:
-//   1 BDT = <COIN_RATE> in-game coins (env, default 10).
-// Seeding is idempotent (ON CONFLICT DO NOTHING): new products get added on
-// every boot without duplicating or touching products you've edited.
+// ---------------------------------------------------------------------------
+// Product catalog — idempotent seed (ON CONFLICT DO NOTHING).
+// Coin deposits are priced at a fixed rate: 1 BDT = COIN_RATE in-game coins.
+// The catalog also includes kits & ranks (item-type products).
+// ---------------------------------------------------------------------------
+
+// Products that should never appear in the shop. Auto-hidden on every deploy
+// so old-rate packs never resurface if the COIN_RATE changes.
+const RETIRED_SLUGS = [
+  '100k-coins', '250k-coins', '500k-coins', '750k-coins', '1m-coins',
+  '1p5m-coins', '2m-coins', '3m-coins', '5m-coins', '10m-coins', '25m-coins',
+  'crate-key', 'crate-key-5',
+];
+
 const CATALOG = [
   // ---- In-game money deposits (coins = price_bdt * COIN_RATE) ----
   { name: '200 Coins', slug: 'deposit-20', category: 'In-Game Money',
@@ -90,15 +110,6 @@ const CATALOG = [
 
 const COIN_RATE = config.coinRate;
 
-// Products that should never appear in the shop. Includes packs seeded at
-// the old coin rate and any removed products (e.g. crate keys). Kept here so
-// they stay hidden across deploys even if they already exist in the DB.
-const RETIRED_SLUGS = [
-  '100k-coins', '250k-coins', '500k-coins', '750k-coins', '1m-coins',
-  '1p5m-coins', '2m-coins', '3m-coins', '5m-coins', '10m-coins', '25m-coins',
-  'crate-key', 'crate-key-5',
-];
-
 async function seedProducts() {
   for (let i = 0; i < CATALOG.length; i++) {
     const it = CATALOG[i];
@@ -106,8 +117,8 @@ async function seedProducts() {
     const inGameAmount = it.money ? Number(it.price_bdt) * COIN_RATE : null;
     await pool.query(
       `INSERT INTO products
-        (name, slug, category, description, price_bdt, delivery_type,
-         in_game_amount, item_material, item_amount, command_template, featured, sort_order)
+         (name, slug, category, description, price_bdt, delivery_type,
+          in_game_amount, item_material, item_amount, command_template, featured, sort_order)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        ON CONFLICT (slug) DO NOTHING`,
       [it.name, it.slug, it.category, it.description, it.price_bdt, deliveryType,

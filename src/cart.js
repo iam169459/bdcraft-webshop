@@ -4,7 +4,6 @@ const config = require('./config');
 
 // Cart persisted in a signed cookie so it survives server restarts (Render
 // free tier) and requires no DB calls on every page. Keys are product IDs.
-
 const CART_COOKIE = 'bdcart';
 
 function parse(cart) {

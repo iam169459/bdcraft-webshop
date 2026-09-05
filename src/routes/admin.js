@@ -74,7 +74,7 @@ module.exports = (pool) => {
     } catch (err) { next(err); }
   });
 
-  // Keep valid transitions here; plugin marks delivered on its own via DB.
+  // Status transitions - admin-confirmed only; plugin handles delivery.
   const setStatus = (status) => async (req, res, next) => {
     try {
       const { rows } = await pool.query(`SELECT * FROM orders WHERE id = $1`, [req.params.id]);
@@ -102,7 +102,7 @@ module.exports = (pool) => {
   // ---- Products ----
   router.get('/products', async (req, res, next) => {
     try {
-      const { rows } = await pool.query(`SELECT * FROM products ORDER BY sort_order, id`);
+      const { rows } = await pool.query(`SELECT * FROM products ORDER BY sort_order, active DESC, id`);
       res.render('admin/products', { title: 'Products', products: rows, money });
     } catch (err) { next(err); }
   });

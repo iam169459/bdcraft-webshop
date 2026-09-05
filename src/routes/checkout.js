@@ -21,7 +21,7 @@ module.exports = (pool) => {
     } catch (err) { next(err); }
   });
 
-  // Create the order: status = unpaid for bKash/manual until admin verifies.
+  // Create the order: status = verifying for bKash/manual until admin verifies.
   router.post('/', async (req, res, next) => {
     try {
       const cart = await hydrate(req, pool);
