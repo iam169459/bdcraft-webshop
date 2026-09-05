@@ -2,7 +2,7 @@
 
 A complete Minecraft server webshop for **BDCraft** in Bangladesh:
 
-- 🛒 **Storefront** — buy in-game coins, ranks, kits & items
+- 🛒 **Storefront** — buy in-game coins, ranks, kits & items (coin rate **1 tk = 10 coins**, configurable via `COIN_RATE`)
 - 💳 **bKash / manual payments** — buyer sends money, admin verifies the TrxID
 - ⚡ **Automatic in-game delivery** — a Paper/Spigot plugin polls the shared database and grants the purchase, even to offline players
 - 🗄 **Neon Postgres** — serverless database shared by the web backend *and* the plugin
@@ -120,3 +120,5 @@ No web↔plugin HTTP connection needed — **Neon Postgres is the bridge**, exac
   `src/routes/admin.js` with an auto-verify call.
 - `economy.mode` on the plugin defaults to Vault — bundle an economy plugin if you don't have one.
 - Everything in this repo uses BDT (৳). To switch currency, change `CURRENCY`.
+- The coin deposit packs are priced automatically as `price (tk) × COIN_RATE`. Editing
+  `COIN_RATE` in `.env` and redeploying re-prices new packs; previously-seeded packs stay as-is.

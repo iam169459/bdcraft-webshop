@@ -19,6 +19,7 @@ const config = {
   mcVersion: process.env.MC_VERSION || '1.20.4',
   discordUrl: process.env.DISCORD_URL || '',
   currency: process.env.CURRENCY || 'BDT',
+  coinRate: intEnv('COIN_RATE', 10), // in-game coins per 1 BDT
   bkashNumber: process.env.BKASH_NUMBER || '01XXXXXXXXX',
   bkashName: process.env.BKASH_NAME || 'BDCraft Shop',
   adminNotes: process.env.ADMIN_NOTES || 'Send the exact amount via bKash to the number above, then enter your bKash TrxID.',
