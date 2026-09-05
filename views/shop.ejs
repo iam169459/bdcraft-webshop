@@ -2,12 +2,12 @@
 <%- include('partials/header') %>
 
 <div class="max-w-6xl mx-auto px-4 py-10">
-  <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+  <div data-reveal class="flex items-center justify-between flex-wrap gap-4 mb-8">
     <h1 class="text-3xl font-extrabold text-white">Shop</h1>
     <div class="flex gap-2 flex-wrap">
-      <a href="/shop?category=all" class="px-3 py-1.5 rounded-lg text-sm border <%- category === 'all' ? 'bg-accent text-bedrock-950 border-accent font-bold' : 'border-bedrock-700 text-slate-300 hover:bg-bedrock-800' %>">All</a>
+      <a href="/shop?category=all" class="px-3 py-1.5 rounded-lg text-sm border transition <%- category === 'all' ? 'bg-accent text-bedrock-950 border-accent font-bold' : 'border-bedrock-700 text-slate-300 hover:bg-bedrock-800' %>">All</a>
       <% categories.forEach(function(c) { %>
-        <a href="/shop?category=<%= encodeURIComponent(c.category) %>" class="px-3 py-1.5 rounded-lg text-sm border <%- category === c.category ? 'bg-accent text-bedrock-950 border-accent font-bold' : 'border-bedrock-700 text-slate-300 hover:bg-bedrock-800' %>"><%= c.category %></a>
+        <a href="/shop?category=<%= encodeURIComponent(c.category) %>" class="px-3 py-1.5 rounded-lg text-sm border transition <%- category === c.category ? 'bg-accent text-bedrock-950 border-accent font-bold' : 'border-bedrock-700 text-slate-300 hover:bg-bedrock-800' %>"><%= c.category %></a>
       <% }) %>
     </div>
   </div>
@@ -16,9 +16,9 @@
     <div class="text-center py-20 text-slate-400">No products in this category yet.</div>
   <% } else { %>
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      <% products.forEach(function(p) { %>
-        <form method="post" action="/cart/add" class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5 hover:border-accent/50 hover:-translate-y-0.5 transition flex flex-col">
-          <div class="text-4xl mb-3"><%= p.delivery_type === 'money' ? '🪙' : '🎁' %></div>
+      <% products.forEach(function(p, idx) { %>
+        <form method="post" action="/cart/add" data-reveal data-delay="<%= idx % 6 %>" class="glow-card bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-5 flex flex-col">
+          <div class="text-4xl mb-3 bob-wrap bw-<%= (idx % 3) + 1 %>"><%= p.delivery_type === 'money' ? '🪙' : '🎁' %></div>
           <h3 class="font-bold text-white text-lg"><%= p.name %></h3>
           <p class="text-sm text-slate-400 mt-1 flex-1"><%= p.description %></p>
           <% if (p.delivery_type === 'money' && p.in_game_amount) { %>
@@ -29,7 +29,7 @@
             <div class="flex items-center gap-1">
               <input type="hidden" name="productId" value="<%= p.id %>" />
               <input type="number" name="qty" value="1" min="1" max="99" class="w-14 bg-bedrock-800 border border-bedrock-700 rounded-lg px-2 py-1.5 text-sm text-center" />
-              <button class="px-4 py-1.5 rounded-lg bg-accent text-bedrock-950 text-sm font-bold hover:brightness-110">Add</button>
+              <button class="btn-shine px-4 py-1.5 rounded-lg bg-accent text-bedrock-950 text-sm font-bold hover:brightness-110">Add</button>
             </div>
           </div>
         </form>

@@ -2,16 +2,16 @@
 <%- include('partials/header') %>
 
 <div class="max-w-4xl mx-auto px-4 py-10">
-  <h1 class="text-3xl font-extrabold text-white mb-2">Checkout</h1>
-  <p class="text-slate-400 mb-8">Send the money, then fill the form. Your order is delivered <span class="text-accent">automatically by our plugin</span> once we verify the payment.</p>
+  <h1 data-reveal class="text-3xl font-extrabold text-white mb-2">Checkout</h1>
+  <p data-reveal data-delay="1" class="text-slate-400 mb-8">Send the money, then fill the form. Your order is delivered <span class="text-accent">automatically by our plugin</span> once we verify the payment.</p>
 
-  <div class="mb-6 flex gap-2">
-    <a href="/checkout?method=bkash" class="px-5 py-2.5 rounded-lg text-sm font-semibold <%- method === 'bkash' ? 'bg-pink-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">bKash</a>
-    <a href="/checkout?method=manual" class="px-5 py-2.5 rounded-lg text-sm font-semibold <%- method === 'manual' ? 'bg-indigo-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">Manual / Other</a>
+  <div data-reveal data-delay="2" class="mb-6 flex gap-2">
+    <a href="/checkout?method=bkash" class="px-5 py-2.5 rounded-lg text-sm font-semibold transition <%- method === 'bkash' ? 'bg-pink-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">bKash</a>
+    <a href="/checkout?method=manual" class="px-5 py-2.5 rounded-lg text-sm font-semibold transition <%- method === 'manual' ? 'bg-indigo-500 text-white' : 'bg-bedrock-800 text-slate-300 border border-bedrock-700' %>">Manual / Other</a>
   </div>
 
   <% if (method === 'bkash') { %>
-    <div class="bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-xl p-5 mb-6">
+    <div data-reveal data-delay="2" class="bg-gradient-to-br from-pink-500/10 to-purple-500/10 border border-pink-500/30 rounded-xl p-5 mb-6">
       <h2 class="font-bold text-white mb-3">How to pay with bKash</h2>
       <ol class="list-decimal list-inside space-y-1 text-sm text-slate-300">
         <li>Go to bKash app → <b>Send Money</b> to the number below.</li>
@@ -22,14 +22,14 @@
       <p class="mt-4 text-lg"><b class="text-pink-400">Send to:</b> <span class="font-mono text-white bg-bedrock-900 px-3 py-1 rounded-lg"><%= bkashNumber %></span> (<%= bkashName %>)</p>
     </div>
   <% } else { %>
-    <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-5 mb-6">
+    <div data-reveal data-delay="2" class="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-5 mb-6">
       <h2 class="font-bold text-white mb-2">Manual / Other payment</h2>
       <p class="text-sm text-slate-300">Nagad, Rocket, bank transfer or any method you agree with the admin. Send
         <b class="text-white"><%= money(cart.total) %></b> and enter your transaction/reference ID below so we can verify.</p>
     </div>
   <% } %>
 
-  <form method="post" action="/checkout" class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-6 space-y-4">
+  <form method="post" action="/checkout" data-reveal data-delay="3" class="bg-bedrock-850 border border-bedrock-700/60 rounded-xl p-6 space-y-4">
     <input type="hidden" name="payment_method" value="<%= method %>" />
 
     <div>

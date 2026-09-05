@@ -2,18 +2,18 @@
 <%- include('partials/header') %>
 
 <div class="max-w-3xl mx-auto px-4 py-10">
-  <h1 class="text-3xl font-extrabold text-white mb-8">Your cart</h1>
+  <h1 data-reveal class="text-3xl font-extrabold text-white mb-8">Your cart</h1>
 
   <% if (cart.items.length === 0) { %>
-    <div class="text-center py-16 bg-bedrock-850 rounded-xl border border-bedrock-700/60">
-      <p class="text-5xl mb-4">🛒</p>
+    <div data-reveal class="text-center py-16 bg-bedrock-850 rounded-xl border border-bedrock-700/60">
+      <p class="text-5xl mb-4 bob-wrap">🛒</p>
       <p class="text-slate-300 mb-6">Your cart is empty.</p>
-      <a href="/shop" class="px-6 py-3 rounded-lg bg-accent text-bedrock-950 font-bold">Browse the shop</a>
+      <a href="/shop" class="btn-shine px-6 py-3 rounded-lg bg-accent text-bedrock-950 font-bold">Browse the shop</a>
     </div>
   <% } else { %>
     <form method="post" action="/cart/update" class="space-y-3">
-      <% cart.items.forEach(function(line) { %>
-        <div class="flex items-center justify-between gap-4 bg-bedrock-850 border border-bedrock-700/60 rounded-xl px-4 py-3">
+      <% cart.items.forEach(function(line, idx) { %>
+        <div data-reveal data-delay="<%= idx % 4 %>" class="flex items-center justify-between gap-4 bg-bedrock-850 border border-bedrock-700/60 rounded-xl px-4 py-3 glow-card">
           <div class="min-w-0">
             <p class="font-bold text-white"><%= line.product.name %></p>
             <p class="text-xs text-slate-500"><%= money(line.unit) %> each</p>

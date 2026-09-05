@@ -1,17 +1,18 @@
 <header class="sticky top-0 z-40 border-b border-bedrock-700/60 bg-bedrock-900/90 backdrop-blur">
+  <div class="gradient-bar absolute top-0 left-0 right-0"></div>
   <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
     <a href="/" class="flex items-center gap-2 font-bold text-lg text-white">
-      <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 grid place-items-center text-xl">⛏</span>
-      <%= shopName %>
+      <span class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-700 grid place-items-center text-xl anim-load">⛏</span>
+      <span class="anim-load ld-1"><%= shopName %></span>
     </a>
     <nav class="flex items-center gap-1 sm:gap-2 text-sm">
-      <a href="/" class="px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path === '/' ? 'bg-bedrock-700 text-white' : 'text-slate-300' %>">Home</a>
-      <a href="/shop" class="px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path === '/shop' ? 'bg-bedrock-700 text-white' : 'text-slate-300' %>">Shop</a>
-      <a href="/cart" class="px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path.startsWith('/cart') ? 'bg-bedrock-700 text-white' : 'text-slate-300' %>">
+      <a href="/" class="nav-link px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path === '/' ? 'active bg-bedrock-700 text-white' : 'text-slate-300' %>">Home</a>
+      <a href="/shop" class="nav-link px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path === '/shop' ? 'active bg-bedrock-700 text-white' : 'text-slate-300' %>">Shop</a>
+      <a href="/cart" class="nav-link px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path.startsWith('/cart') ? 'active bg-bedrock-700 text-white' : 'text-slate-300' %>">
         Cart <% if (cartCount > 0) { %><span class="ml-1 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-accent text-bedrock-950 text-xs font-bold"><%= cartCount %></span><% } %>
       </a>
-      <a href="/order/TRACK" class="px-3 py-2 rounded-lg hover:bg-bedrock-700 text-slate-300 hidden sm:block">Track</a>
-      <a href="/admin" class="px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path.startsWith('/admin') ? 'bg-bedrock-700 text-white' : 'text-slate-300' %>">Admin</a>
+      <a href="/order/TRACK" class="nav-link px-3 py-2 rounded-lg hover:bg-bedrock-700 text-slate-300 hidden sm:block">Track</a>
+      <a href="/admin" class="nav-link px-3 py-2 rounded-lg hover:bg-bedrock-700 <%- path.startsWith('/admin') ? 'active bg-bedrock-700 text-white' : 'text-slate-300' %>">Admin</a>
     </nav>
   </div>
 </header>
